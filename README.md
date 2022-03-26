@@ -2,23 +2,25 @@
 A windows-like photo screensaver, which also puts captions on the images
 
 # In Order for it to Work:
-- Install requirements from `requirements.txt`.
-- Make changes to the [source code](#venv-and-some-library-code-present)
-- Add a settings JSON file to `USER-HOME\screenSaver\` (where `USER-HOME` is the home directory of the user, e.g.: `C:\Users\user\`)
-  - The settings file should be called `screenSaverSettings.json` and be in the following format:
-    ```json
-    {
-        "src": "C:\\Users\\User\\Pictures\\Wallpapers",
-        "delay": 3,
-        "cacheDir": "C:\\Users\\User\\Pictures\\tryMe",
-        "font": "C:\\Users\\User\\Documents\\Programming\\Python\\imageTXT\\font.ttf"
-    }
-    ```
-    where:
-    - `src` - The root folder of all the pictures to be displayed.
-    - `delay` - The amount of time to wait before changing the image.
-    - `cacheDir` - The directory for storing the temporary edited image file.
-    - `font` - The font for the captions on the images.
+1. Install requirements from `requirements.txt`.
+2. Make changes to the [source code](#venv-and-some-library-code-present)
+3. Add a settings JSON file to `USER-HOME\screenSaver\` (where `USER-HOME` is the home directory of the user, e.g.: `C:\Users\user\`)
+   - The settings file should be called `screenSaverSettings.json` and be in the following format:
+      ```json
+      {
+          "src": "C:\\Users\\User\\Pictures\\Wallpapers",
+          "delay": 3,
+          "cacheDir": "C:\\Users\\User\\Pictures\\tryMe",
+          "font": "C:\\Users\\User\\Documents\\Programming\\Python\\imageTXT\\font.ttf"
+      }
+      ```
+      where:
+      - `src` - The root folder of all the pictures to be displayed.
+      - `delay` - The amount of time to wait before changing the image.
+      - `cacheDir` - The directory for storing the temporary edited image file.
+      - `font` - The font for the captions on the images.
+4. Finally, follow the instructions in the [arcade screensaver framework](https://github.com/SirGnip/arcade_screensaver_framework) to create the windows-compatible screensaver app.
+
 
 ## Optional: Custom Captions
 The app automatically takes the top-most level folder name for the captions (unless in the root folder). For example, if the the image's path is `~\Pictures\Hawaii 2021\Maui\img.jpg`, and the root folder is `~\Pictures`, the caption for the pictures will be *Hawaii 2021*. 
