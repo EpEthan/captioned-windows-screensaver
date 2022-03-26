@@ -7,6 +7,7 @@ from PIL import Image, ImageFont, ImageDraw, ImageFilter
 
 import json
 import random as rd
+import math
 import os, os.path
 
 APP_DATA_DIR = os.path.expanduser("~") + r"\screenSaver\\"
@@ -26,18 +27,45 @@ class ScreenSaver(arcade.Window):
         self.frame = 0
         self.font = APP_DATA_DIR + "mplus-rounded.ttf"
 
+        # keeping track of photos
+        self.pictures: list[str] = map_images(self.src) # list of paths of the photos to be displayed
+        i = 0
+        while i < 3:
+            rd.shuffle(self.pictures)
+            i += 1
+        
+        self.cur_img = 0
+        self.lrKeyPressed: bool = False                 # left/right key pressed boolean
+        self.changeImg_amount = 0
+
     def setup(self):
         pass
 
     def on_draw(self):
         arcade.start_render()
 
-        if int(self.frame) % self.delay == 0:
+        if int(self.frame) % self.delay == 0 or self.lrKeyPressed:
             self.frame = 0
+            if self.lrKeyPressed:
+                # if right/left key was pressed, fast forward/rewind index in list
+                self.lrKeyPressed = False
+                self.cur_img += self.changeImg_amount
+                self.changeImg_amount = 0
+            else:
+                self.cur_img += 1
 
+            # check if not overflowing list size
+            if self.cur_img >= len(self.pictures):
+                # if can't add, restart loop
+                self.cur_img = 0
+            elif self.cur_img < 0:
+                # if went too far back, go to the end of the list 
+                self.cur_img = len(self.pictures) - 1
+
+            # set the new background
             try:
                 # get and add text to the image
-                imgPath = self.choose_img()
+                imgPath = self.pictures[self.cur_img]
                 caption = self.get_img_caption(imgPath)
                 caption = self.format_caption(caption)
                 img = self.edit_img(imgPath, caption)
@@ -68,55 +96,14 @@ class ScreenSaver(arcade.Window):
         self.frame += 1
 
     def on_key_press(self, symbol: int, modifiers: int):
-        # TODO: handle keypresses to move forward/backward
         if symbol == arcade.key.LEFT:
-            print("LEFT!")
+            self.lrKeyPressed = True
+            self.changeImg_amount -= 1
         elif symbol == arcade.key.RIGHT:
-            print("RIGHT!")
+            self.lrKeyPressed = True
+            self.changeImg_amount += 1
         else:
             close_all_windows()
-
-    def choose_img(self, src: str = None):
-        """
-        Choose a random image from a given source path
-
-        :param str src: The source path of the folder to choose the image file from.
-        """
-
-        if src == None:
-            src = self.src
-
-        files = os.listdir(src)
-        while (
-            files
-        ):  # work until there's no more files in the folder (return if found a good file)
-            # shuffle the list and choose a random file
-            rd.shuffle(files)
-            file_chosen = files[rd.randint(0, len(files) - 1)]
-            path = src + "\\" + file_chosen
-
-            if os.path.isdir(path):
-                # get a file from the given folder
-                path = self.choose_img(path)
-
-                if path:
-                    return path
-            else:
-                # check if the file is an image file and return it
-                lowerPath = path.lower()
-                if (
-                    ".png" == lowerPath[-4:]
-                    or ".jpg" == lowerPath[-4:]
-                    or ".jpeg" == lowerPath[-5:]
-                    or ".tiff" == lowerPath[-5:]
-                    or ".gif" == lowerPath[-4:]
-                ):
-                    return path
-
-            # remove file from the dir-list and pick a different one
-            files.remove(file_chosen)
-
-        return None
 
     def get_img_caption(self, path: str):
         """
@@ -299,3 +286,30 @@ class ScreenSaver(arcade.Window):
         bottomPadding = (self.height - imgHeight) / 2
 
         return leftPadding, bottomPadding, imgWidth, imgHeight
+
+
+def map_images(src: str) -> list[str]:
+    imgs = []
+
+    files = os.listdir(src)
+    for file in files:
+        path = src + "\\" + file
+        lowerPath = path.lower()
+        if (
+            ".png" == lowerPath[-4:]
+            or ".jpg" == lowerPath[-4:]
+            or ".jpeg" == lowerPath[-5:]
+            or ".tiff" == lowerPath[-5:]
+            or ".gif" == lowerPath[-4:]
+        ):
+            imgs.append(path)
+        elif os.path.isdir(path):
+            # get a file from the given folder
+            try:
+                dir_imgs = map_images(path)
+                if dir_imgs:
+                    imgs = imgs + dir_imgs
+            except:
+                pass
+
+    return imgs
