@@ -1,6 +1,44 @@
 # Captioned Windows Screensaver
 A windows-like photo screensaver, which also puts captions on the images
 
+# In Order for it to Work:
+- Install requirements from `requirements.txt`.
+- Make changes to the [source code](#venv-and-some-library-code-present)
+- Add a settings JSON file to `USER-HOME\screenSaver\` (where `USER-HOME` is the home directory of the user, e.g.: `C:\Users\user\`)
+  - The settings file should be called `screenSaverSettings.json` and be in the following format:
+    ```json
+    {
+        "src": "C:\\Users\\User\\Pictures\\Wallpapers",
+        "delay": 3,
+        "cacheDir": "C:\\Users\\User\\Pictures\\tryMe",
+        "font": "C:\\Users\\User\\Documents\\Programming\\Python\\imageTXT\\font.ttf"
+    }
+    ```
+    where:
+    - `src` - The root folder of all the pictures to be displayed.
+    - `delay` - The amount of time to wait before changing the image.
+    - `cacheDir` - The directory for storing the temporary edited image file.
+    - `font` - The font for the captions on the images.
+
+## Optional: Custom Captions
+The app automatically takes the top-most level folder name for the captions (unless in the root folder). For example, if the the image's path is `~\Pictures\Hawaii 2021\Maui\img.jpg`, and the root folder is `~\Pictures`, the caption for the pictures will be *Hawaii 2021*. 
+
+If you want a different picture caption for all pictures under the picture's folder for example, add a `screensaver.config` file whose contents is simply the caption wanted.
+
+That way, if you have the following hirarchy:
+
+![folder-structure-light](https://github.com/EpEthan/captioned-windows-screensaver/blob/main/folder_structure_light.png?raw=false#gh-light-mode-only)
+![folder-structure-dark](https://github.com/EpEthan/captioned-windows-screensaver/blob/main/folder_structure_dark.png?raw=false#gh-dark-mode-only)
+
+- **Hawaii 2021**:
+  - **Maui**: All pictures under the folder "Maui" and folders inside of it will have the caption: *"Hawaii 2021 - Maui"*.
+  - **Mount Everest**: all pictures under this folder will have the caption: *"Hawaii 2021"*
+- **Iceland 2018**:
+  - All pictures under this folder will have the caption: *"Iceland 2018"*
+- Any picture directly under the **root** folder will have the caption: *"Unknown ¯\(°_o)/¯"*
+
+
+
 # VENV And Some Library Code Present
 Of course, the requirements are in the `requirements.txt` file, however, some changes had to be made to the code from the python libraries, since they caused some issues:
 
